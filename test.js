@@ -2,14 +2,14 @@ var test = require('tape')
 var through = require('through')
 var crypto = require('crypto')
 
-var batchStream = require('./')
+var byteStream = require('./')
 
 function batchTest(limit, getSize, cb) {
   if (!cb) {
     cb = getSize
     getSize = undefined
   }
-  var batcher = batchStream(limit, getSize)
+  var batcher = byteStream(limit, getSize)
   var writer = through(onBatch, onEnd)
 
   batcher.on('error', cb)

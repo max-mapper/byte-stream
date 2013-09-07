@@ -1,7 +1,7 @@
 {
-  "name": "batch-stream",
+  "name": "byte-stream",
   "version": "0.0.1",
-  "description": "through stream that breaks streams of objects into groups limited by a cumulative byte size",
+  "description": "through stream that buffers streams into batches limited by a cumulative byte size limit",
   "main": "index.js",
   "scripts": {
     "test": "node test.js"
@@ -16,9 +16,9 @@
   "license": "BSD-2-Clause",
   "repository": {
     "type": "git",
-    "url": "git://github.com/maxogden/batch-stream.git"
+    "url": "git://github.com/maxogden/byte-stream.git"
   },
   "bugs": {
-    "url": "https://github.com/maxogden/batch-stream/issues"
+    "url": "https://github.com/maxogden/byte-stream/issues"
   }
 }

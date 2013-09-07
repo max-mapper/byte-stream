@@ -1,13 +1,13 @@
-# batch-stream
+# byte-stream
 
 A stream that you write individual things to, and it emits batches (arrays) of things that are under a byte size limit.
 
-[![NPM](https://nodei.co/npm/batch-stream.png)](https://nodei.co/npm/batch-stream/)
+[![NPM](https://nodei.co/npm/byte-stream.png)](https://nodei.co/npm/byte-stream/)
 
 ## usage
 
 ```
-var batcher = require('batch-stream')
+var batcher = require('byte-stream')
 ```
 
 Returns a stream. You can `.pipe` other streams to it or `.write` them yourself (if you `.write` don't forget to `.end`)
@@ -16,9 +16,9 @@ For more examples of usage see `test.js`
 
 #### batcher.next()
 
-Call this to get the next batch. `batch-stream` will buffer data indefinitely until you call `.next`. While it is buffering data it will also send the proper backpressure events to upstream streams so that they know to back off a bit.
+Call this to get the next batch. `byte-stream` will buffer data indefinitely until you call `.next`. While it is buffering data it will also send the proper backpressure events to upstream streams so that they know to back off a bit.
 
-The reasoning behind the semantics of `.next` is due to the use case in which `batch-stream` was originally written: Loading data into a database without overloading the database with too much data at once. For example, if a large file is being read at a rate of 200MB/s but the data store it is being copied into can only accept data at 50MB/s, *and* it is advantageous for you to insert data in batches (as opposed to single round trips for each piece of data), then you would want to get a batch from `level-batcher`, put it into the store, and as soon as you're read for the next one call `.next` to get a new batch.
+The reasoning behind the semantics of `.next` is due to the use case in which `byte-stream` was originally written: Loading data into a database without overloading the database with too much data at once. For example, if a large file is being read at a rate of 200MB/s but the data store it is being copied into can only accept data at 50MB/s, *and* it is advantageous for you to insert data in batches (as opposed to single round trips for each piece of data), then you would want to get a batch from `level-batcher`, put it into the store, and as soon as you're read for the next one call `.next` to get a new batch.
 
 ### license
 
