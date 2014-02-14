@@ -1,5 +1,5 @@
 var test = require('tape')
-var through = require('through')
+var through = require('through2')
 var crypto = require('crypto')
 
 var byteStream = require('./')
@@ -17,14 +17,14 @@ function batchTest(limit, getSize, cb) {
 
   var batches = []
   
-  function onBatch(batch) {
+  function onBatch(batch, _, callback) {
     batches.push(batch)
-    batcher.next()
+    callback();
   }
   
-  function onEnd() {
+  function onEnd(callback) {
     cb(false, batches)
-    this.queue(null)
+    callback()
   }
 
   return batcher
@@ -50,31 +50,30 @@ test('objects half the size of a batch', function(t) {
   batcher.end()
 })
 
+test('objects twice the size of a batch', function(t) {
+  var batcher = batchTest(512, function(err, batches) {
+    if (err) throw err
+    t.equals(batches.length, 40)
+    t.end()
+  })
+  for (var i = 0; i < 20; i++) batcher.write(crypto.randomBytes(1024))
+  batcher.end()
+})
+
 test('object objects', function(t) {
   var batcher = batchTest(50, function(err, batches) {
     if (err) throw err
     t.equals(batches.length, 3)
     t.end()
   })
-  for (var i = 0; i < 11; i++) batcher.write({"fo": "o"})
-  batcher.end()
-})
-
-test('custom size function', function(t) {
-  var batcher = batchTest(500, function getSize(obj) { return 100 }, function(err, batches) {
-    if (err) throw err
-    t.equals(batches.length, 3)
-    t.equals(batches[0][0], 'hi')
-    t.end()
-  })
-  for (var i = 0; i < 11; i++) batcher.write('hi')
+  for (var i = 0; i < 11; i++) batcher.write(JSON.stringify({"fo": "o"}))
   batcher.end()
 })
 
 test('first batch length is always one', function(t) {
   var batcher = batchTest(1024 * 1024, function(err, batches) {
     if (err) throw err
-    t.equals(batches[0].length, 1)
+    t.equals(batches[0].length, 22)
     t.end()
   })
   for (var i = 0; i < 11; i++) batcher.write('hi')
