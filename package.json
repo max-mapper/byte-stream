@@ -10,7 +10,8 @@
     "readable-stream": "~1.1.10"
   },
   "devDependencies": {
-    "tape": "~1.1.0"
+    "tape": "~1.1.0",
+    "through2": "~0.4.1"
   },
   "author": "max ogden",
   "license": "BSD-2-Clause",

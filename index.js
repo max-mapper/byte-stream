@@ -17,7 +17,7 @@ MargaretBatcher.prototype._transform = function(obj, _, cb) {
   this.currentBatch = Buffer.concat([this.currentBatch, obj], this.size);
   // keep batches under limit
   while (this.size >= this.limit) {
-    this.push(currentBatch.slice(0, this.limit));
+    this.push(this.currentBatch.slice(0, this.limit));
     this.currentBatch = this.currentBatch.slice(this.limit);
     this.size = this.currentBatch.length;
   }
