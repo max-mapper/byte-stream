@@ -16,12 +16,12 @@ function batchTest(limit, getSize, cb) {
   batcher.pipe(writer)
 
   var batches = []
-  
+
   function onBatch(batch, _, callback) {
     batches.push(batch)
     callback();
   }
-  
+
   function onEnd(callback) {
     cb(false, batches)
     callback()
@@ -78,4 +78,21 @@ test('first batch length is always one', function(t) {
   })
   for (var i = 0; i < 11; i++) batcher.write('hi')
   batcher.end()
+})
+
+test('batch after time', function(t) {
+  var batcher = batchTest({time:100}, function(err, batches) {
+    if (err) throw err
+    t.equals(batches.length, 2)
+    t.equals(batches[0].toString(), 'hello')
+    t.equals(batches[1].toString(), 'world')
+    t.end()
+  })
+  batcher.write('hel')
+
+  setTimeout(function() {
+    batcher.write('lo')
+    batcher.write('world')
+    batcher.end()
+  }, 250)
 })
