@@ -14,7 +14,7 @@ function MargaretBatcher(opts) {
     return new MargaretBatcher(opts)
   }
   if (typeof opts !== 'object') opts = {limit:opts} // backward compat
-  Transform.call(this, {objectMode:true})
+  Transform.call(this, {objectMode:true, highWaterMark:2})
   this.limit = opts.limit || 4096 // 4KB, arbitrary
   this.time = opts.time
   this.getLength = opts.length || getLength
