@@ -5,41 +5,49 @@ module.exports = MargaretBatcher
 
 util.inherits(MargaretBatcher, Transform)
 
+function getLength(obj) {
+  return obj.length || 1
+}
+
 function MargaretBatcher(opts) {
   if (!(this instanceof MargaretBatcher)) {
     return new MargaretBatcher(opts)
   }
   if (typeof opts !== 'object') opts = {limit:opts} // backward compat
-  Transform.call(this)
+  Transform.call(this, {objectMode:true})
   this.limit = opts.limit || 4096 // 4KB, arbitrary
   this.time = opts.time
+  this.getLength = opts.length || getLength
   this.currentTime = Date.now()
-  this.currentBatch = new Buffer(0)
+  this.currentBatch = []
   this.size = 0
 }
 
 MargaretBatcher.prototype._transform = function(obj, _, cb) {
-  this.size += obj.length
-  this.currentBatch = Buffer.concat([this.currentBatch, obj], this.size)
+  var len = this.getLength(obj)
 
-  // keep batches under limit
-  while (this.size >= this.limit) {
-    this._push();
-  }
-  if (this.time && Date.now() - this.currentTime >= this.time) {
-    this._push();
-  }
+  // we are overflowing - drain first
+  if (this.size + len > this.limit) this._push()
+
+  this.currentBatch.push(obj)
+  this.size += len
+
+  // bigger than limit - just drain
+  if (this.size >= this.limit || (this.time && Date.now() - this.currentTime >= this.time)) this._push()
+
   cb()
 }
 
 MargaretBatcher.prototype._push = function() {
-    this.push(this.currentBatch.slice(0, this.limit))
-    this.currentBatch = this.currentBatch.slice(this.limit)
-    this.size = this.currentBatch.length
-    this.currentTime = Date.now();
-};
+  if (!this.currentBatch.length) return
+  var batch = this.currentBatch
+  this.size = 0
+  this.currentBatch = []
+  this.currentTime = Date.now()
+  this.push(batch)
+}
 
 MargaretBatcher.prototype._flush = function(cb) {
-  this.push(this.currentBatch)
+  this._push()
   cb()
 }
