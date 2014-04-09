@@ -9,7 +9,11 @@ A stream that you write buffers or strings to, and it emits buffers at or bellow
 ```
 var batcher = require('byte-stream')
 
+// batch until a byte limit
 var batchedStream = batcher(limit);
+
+// or batch until a given time or byte limit
+var batchedStream = batcher({time:1000, limit:limit})
 ```
 
 Returns a stream. You can `.pipe` other streams to it or `.write` them yourself (if you `.write` don't forget to `.end`)
