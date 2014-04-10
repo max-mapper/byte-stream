@@ -1,6 +1,6 @@
 {
   "name": "byte-stream",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "through stream that buffers streams into batches limited by a cumulative byte size limit",
   "main": "index.js",
   "scripts": {
