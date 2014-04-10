@@ -21,9 +21,15 @@ function MargaretBatcher(opts) {
   this.currentTime = Date.now()
   this.currentBatch = []
   this.size = 0
+  this._push = this._push.bind(this)
 }
 
 MargaretBatcher.prototype._transform = function(obj, _, cb) {
+  if (this.time && !this.timeout) {
+    this.timeout = setTimeout(this._push, this.time)
+    if (this.timeout.unref) this.timeout.unref()
+  }
+
   var len = this.getLength(obj)
 
   // we are overflowing - drain first
@@ -33,15 +39,17 @@ MargaretBatcher.prototype._transform = function(obj, _, cb) {
   this.size += len
 
   // bigger than limit - just drain
-  if (this.size >= this.limit || (this.time && Date.now() - this.currentTime >= this.time)) this._push()
+  if (this.size >= this.limit) this._push()
 
   cb()
 }
 
 MargaretBatcher.prototype._push = function() {
+  if (this.timeout) clearTimeout(this.timeout)
   if (!this.currentBatch.length) return
   var batch = this.currentBatch
   this.size = 0
+  this.timeout = null
   this.currentBatch = []
   this.currentTime = Date.now()
   this.push(batch)
