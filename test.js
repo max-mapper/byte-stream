@@ -74,8 +74,8 @@ test('batch after time', function(t) {
   var batcher = batchTest({time:100}, function(err, batches) {
     if (err) throw err
     t.equals(batches.length, 2)
-    t.same(batches[0], ['hel','lo'])
-    t.same(batches[1], ['world'])
+    t.same(batches[0], ['hel'])
+    t.same(batches[1], ['lo', 'world'])
     t.end()
   })
   batcher.write('hel')
