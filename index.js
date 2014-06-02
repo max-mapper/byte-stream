@@ -1,5 +1,6 @@
 var Transform = require('readable-stream').Transform
 var util = require('util')
+var debug = require('debug')('byte-stream')
 
 module.exports = MargaretBatcher
 
@@ -22,6 +23,7 @@ function MargaretBatcher(opts) {
   this.currentBatch = []
   this.size = 0
   this._push = this._push.bind(this)
+  debug('constructor', {limit: this.limit, time: this.time })
 }
 
 MargaretBatcher.prototype._transform = function(obj, _, cb) {
@@ -37,6 +39,8 @@ MargaretBatcher.prototype._transform = function(obj, _, cb) {
 
   this.currentBatch.push(obj)
   this.size += len
+  
+  debug('push', {size: len, total: this.size})
 
   // bigger than limit - just drain
   if (this.size >= this.limit) this._push()

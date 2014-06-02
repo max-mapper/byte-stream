@@ -1,12 +1,13 @@
 {
   "name": "byte-stream",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "through stream that buffers streams into batches limited by a cumulative byte size limit",
   "main": "index.js",
   "scripts": {
     "test": "node test.js"
   },
   "dependencies": {
+    "debug": "^0.8.1",
     "readable-stream": "~1.1.10"
   },
   "devDependencies": {
