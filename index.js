@@ -18,12 +18,24 @@ function MargaretBatcher(opts) {
   Transform.call(this, {objectMode:true, highWaterMark:2})
   this.limit = opts.limit || 4096 // 4KB, arbitrary
   this.time = opts.time
+  this.destroyed = false
   this.getLength = opts.length || getLength
   this.currentTime = Date.now()
   this.currentBatch = []
   this.size = 0
   this._push = this._push.bind(this)
-  debug('constructor', {limit: this.limit, time: this.time })
+  debug('constructor (limit: %d, time: %s)', this.limit, this.time || null)
+}
+
+MargaretBatcher.prototype.destroy = function(err) {
+  if (this.destroyed) return
+  this.destroyed = true
+
+  debug('destroy')
+
+  if (this.timeout) clearTimeout(this.timeout)
+  if (err) this.emit('error', err)
+  this.emit('close')
 }
 
 MargaretBatcher.prototype._transform = function(obj, _, cb) {
@@ -40,7 +52,7 @@ MargaretBatcher.prototype._transform = function(obj, _, cb) {
   this.currentBatch.push(obj)
   this.size += len
   
-  debug('push', {size: len, total: this.size})
+  debug('push (size: %d, total: %d)', len, this.size)
 
   // bigger than limit - just drain
   if (this.size >= this.limit) this._push()

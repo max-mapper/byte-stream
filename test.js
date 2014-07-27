@@ -86,3 +86,13 @@ test('batch after time', function(t) {
     batcher.end()
   }, 250)
 })
+
+test('destroy', function(t) {
+  var batcher = batchTest({time:100}, function(err, batches) {
+    t.ok(err, 'should err')
+    t.end()
+  })
+
+  batcher.write('test')
+  batcher.destroy(new Error('stop'))
+})
