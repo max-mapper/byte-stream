@@ -7,7 +7,7 @@
     "test": "node test.js"
   },
   "dependencies": {
-    "debug": "^1.0.4",
+    "debug": "^4.3.4",
     "readable-stream": "~1.1.10"
   },
   "devDependencies": {
